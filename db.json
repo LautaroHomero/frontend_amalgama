@@ -1,0 +1,37 @@
+{
+    "contacts": [
+      {
+        "id": 1,
+        "avatar_url": "https://i.pravatar.cc/150?img=1",
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": "Acme Inc.",
+        "email": "john.doe@example.com",
+        "phone": { "area_code": "123", "number": "4567890" },
+        "details": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eleifend, nisl eget.",
+        "addresses": [
+          {
+            "line_1": "123 Main St",
+            "line_2": "Apt 4",
+            "zip_code": "10001",
+            "city_id": 1,
+            "state_id": 1
+          }
+        ]
+      }
+    ],
+    "cities": [
+      { "id": 1, "name": "New York" }
+    ],
+    "states": [
+      { "id": 1, "name": "NY" }
+    ],
+    "user-profile": {
+      "avatar_url": "https://i.pravatar.cc/150?img=2",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "company": "Amalgama",
+      "email": "jane@amalgama.co",
+      "address": "456 Broadway Ave, New York, NY"
+    }
+  }
