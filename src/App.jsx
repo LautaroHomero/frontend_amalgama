@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ContactList from "./components/ContactList";
 import UserProfile from "./components/UserProfile";
 import { user } from "./data/data";
+import Login from "./pages/Login";
+import "./index.css";
 
 const App = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [contacts, setContacts] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem("isLoggedIn") === "true";
+  });
+
+  
+  useEffect(() => {
+    localStorage.setItem("isLoggedIn", isLoggedIn);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     fetch("https://randomuser.me/api/?results=10")
@@ -40,20 +51,51 @@ const App = () => {
       });
   }, []);
 
-  return (
-    <div className="app-container">
-      <div className="button-wrapper">
-        <button className="toggle-button" onClick={() => setShowProfile(!showProfile)}>
-          {showProfile ? "Ver Contactos" : "Ver Perfil"}
-        </button>
-      </div>
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("isLoggedIn");
+  };
 
-      {showProfile ? (
-        <UserProfile user={user} />
-      ) : (
-        <ContactList contacts={contacts} cities={[]} states={[]} />
-      )}
-    </div>
+  const ProtectedRoute = ({ children }) => {
+    return isLoggedIn ? children : <Navigate to="/login" replace />;
+  };
+
+  const LoginRoute = () => {
+    return isLoggedIn ? <Navigate to="/contacts" replace /> : <Login onLoginSuccess={() => setIsLoggedIn(true)} />;
+  };
+
+  return (
+    <Router>
+      <div className="app-container">
+        <div className="button-wrapper" style={{ justifyContent: "space-between" }}>
+          {isLoggedIn && (
+            <>
+              <button className="toggle-button" onClick={() => setShowProfile(!showProfile)}>
+                {showProfile ? "Contacts" : "Profile"}
+              </button>
+              <button className="toggle-button" onClick={handleLogout}>Logout</button>
+            </>
+          )}
+        </div>
+
+        <Routes>
+          <Route path="/login" element={<LoginRoute />} />
+          <Route
+            path="/contacts"
+            element={
+              <ProtectedRoute>
+                {showProfile ? (
+                  <UserProfile user={user} />
+                ) : (
+                  <ContactList contacts={contacts} cities={[]} states={[]} />
+                )}
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to={isLoggedIn ? "/contacts" : "/login"} replace />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
